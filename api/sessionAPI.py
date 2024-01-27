@@ -129,8 +129,11 @@ JSON request format:
 
 JSON response format:
 {
-    "level": level,
-    "accuracy": accuracy
+    [
+        {"level": level,
+        "accuracy": accuracy},
+        ...
+        ]
 }
 
 JSON error format:
@@ -187,6 +190,7 @@ def user_stats():
         return jsonify({'user_stats': user_stats}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
 
 
 '''
