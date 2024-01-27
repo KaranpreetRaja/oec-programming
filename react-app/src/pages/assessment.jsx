@@ -63,17 +63,11 @@ export default function Assessment() {
     }
 
     const handleTesting = async (url) => {
-        const blob = dataURLtoBlob(url)
+        console.log(url)
         
-        console.log(blob)
-        try {
-            const response = await axios.post('http://oecprogramming.pythonanywhere.com/test/json', {
-                blob
-            });
-            console.log('successful! :', response.data);
-        } catch (error) {
-            console.error('failed:', error.message);
-        }
+        const file_path = "/home/karan/Downloads/" + url.substring(27) + ".png"
+
+        console.log(file_path)
     }
 
 
@@ -92,14 +86,16 @@ export default function Assessment() {
         },
     ]
 
-    const handleFinish = async (blob) => {
+    const handleFinish = async (url) => {
 
-        console.log(blob)
+        const file_path = "/home/karan/Downloads/" + url.substring(27) + ".png"
+
+        console.log(file_path)
 
 
         const session_id = sid;
         const user_id = uid;
-        const answer = {} // TODO: Get blob
+        const answer = file_path
         const prompt = prompts[exercise-1].prompt
 
         const question = {
@@ -107,16 +103,16 @@ export default function Assessment() {
             answer
         }
         
-        // try {
-        //     const response = await axios.post('link here', {
-        //         session_id,
-        //         user_id,
-        //         question
-        //     });
-        //     console.log('Drawing sent successful! :', response.data);
-        // } catch (error) {
-        //     console.error('Login failed:', error.message);
-        // }
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/api/session/submit', {
+                session_id,
+                user_id,
+                question
+            });
+            console.log('Drawing sent successful! :', response.data);
+        } catch (error) {
+            console.error('Login failed:', error.message);
+        }
 
         // setIsScore((prevIsScore) => !prevIsScore)
         // setAccuracy(90)
