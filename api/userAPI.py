@@ -50,6 +50,18 @@ def register():
         return jsonify({'JSON': json}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+'''
+example of user document in database:
+{
+    "recommended_level": 0,
+    "level1": [session_id1, session_id2, ...],
+    "level2": [session_id9, session_id10, ...],
+    "level3": [],
+    "level4": [],
+    "level5": []
+}
+'''
+
 
 '''
 POST /api/user/login_with_google
