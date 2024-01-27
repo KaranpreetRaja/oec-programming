@@ -24,6 +24,7 @@ def test():
 # test for json data
 @app.route('/test/json', methods=['POST'])
 def test_json_packet():
+    print(request.json)
     return jsonify(request.json)
 
     
