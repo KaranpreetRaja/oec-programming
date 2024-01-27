@@ -115,6 +115,8 @@ def login():
     try:
         user = request.json
         user = auth.get_user_by_email(user['email'])
+        # verify password
+        auth.get_user_by_email(user['email'], user['password'])
         return jsonify({'uid': user.uid}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
