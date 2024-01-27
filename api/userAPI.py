@@ -9,6 +9,47 @@ users_ref = db.collection('users')
 
 
 '''
+POST /api/create/userDB
+
+Description: Registers a new user in the database.
+
+JSON request format:
+{
+    "level 1": [],
+    "level 2": [],
+    "level 3": [],
+    "level 4": []
+}
+
+JSON response format:
+{
+    "uid": "User DB created successfully."
+}
+
+JSON error format:
+{
+    "error": "error message"
+}
+'''
+
+@user_api.route('/create/userDB', methods=['POST'])
+def create_student():
+    try:
+        uid = request.json["uid"]
+        json = {
+            "level1": [],
+            "level2": [],
+            "level3": [],
+            "level4": []
+        }
+        db.collection('user').document(uid).set(json)
+
+        response = {"message": "User DB created successfully."}
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+'''
 POST /api/user/register
 
 Description: Registers a new user in the database.
@@ -31,6 +72,8 @@ JSON error format:
     "error": "error message"
 }
 '''
+    
+
 @user_api.route('/register', methods=['POST'])
 def register():
     try:
@@ -41,6 +84,7 @@ def register():
             email_verified=user['email_verified'],
             disabled=user['account_disabled']
         )
+
         return jsonify({'uid': user.uid}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
