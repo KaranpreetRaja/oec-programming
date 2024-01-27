@@ -36,7 +36,7 @@ export default function Assessment() {
           {imageDownloadUrl ? (
             <button
               onClick={() => {
-                handleTesting(imageDownloadUrl);
+                handleFinish(imageDownloadUrl);
               }}
               className={`${
                 !isScore ? "" : "hidden"
