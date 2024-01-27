@@ -5,6 +5,8 @@ session_api = Blueprint('session_api', __name__)
 
 from flask_cors import CORS, cross_origin
 
+from helper import vision_module
+
 db = firestore.client()
 db_ref = db.collection('sessions')
 
@@ -147,6 +149,7 @@ JSON error format:
 @cross_origin()
 def submit_response():
     try:
+        print("mark 1")
         session_id = request.json["session_id"]
 
         question = request.json["question"]
@@ -169,20 +172,23 @@ def submit_response():
     
 
 '''
-GET /api/session/userStats
+POST /api/session/userStats
 
 Description: Returns the user's stats for each level.
 
 JSON request format:
 {
     "user_id": user_id,
+    "level": level,
 }
 
 JSON response format:
 {
     [
-        {"level": level,
-        "accuracy": accuracy},
+        {
+            "attempt": int,
+            "average accuracy": accuracy
+        },
         ...
         ]
 }
@@ -192,6 +198,53 @@ JSON error format:
     "error": "error message"
 }
 '''
+'''
+example of user document in database:
+{
+    "recommended_level": 0,
+    "level1": [session_id1, session_id2, ...],
+    "level2": [session_id9, session_id10, ...],
+    "level3": [],
+    "level4": [],
+    "level5": []
+}
+'''
+@session_api.route('/userStats', methods=['GET'])
+@cross_origin()
+def user_stats():
+    try:
+        user_id = request.json["user_id"]
+        user_ref = db.collection('users').document(user_id)
+        user_doc = user_ref.get().to_dict()
+        level = request.json["level"]
+        user_stats = []
+        if level == 1:
+            level_sessions = user_doc["level1"]
+        elif level == 2:
+            level_sessions = user_doc["level2"]
+        elif level == 3:
+            level_sessions = user_doc["level3"]
+        elif level == 4:
+            level_sessions = user_doc["level4"]
+        elif level == 5:
+            level_sessions = user_doc["level5"]
+        else:
+            level_sessions = []
+
+        accuracy = 0
+        for session_id in level_sessions:
+            session_doc = db_ref.document(session_id).get().to_dict()
+            for question in session_doc["questions"]:
+                accuracy += question["accuracy"]
+            user_stats.append(
+                {
+                    "attempt": len(session_doc["questions"]),
+                    "average accuracy": accuracy/len(session_doc["questions"])
+                }
+            )
+        return jsonify(user_stats), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 
 

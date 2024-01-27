@@ -44,11 +44,14 @@ def create_session(level, amount):
             selections.append(random.choice(sentences))
 
     return selections
-
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode('utf-8')
 
 def vision_module(prompt, image_path):
-    base64_image = image_path
+    image_path = encode_image(image_path)
 
+    base64_image = image_path
     headers = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {api_key}"
@@ -78,8 +81,6 @@ def vision_module(prompt, image_path):
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     print(response.json()['choices'][0]['message']['content'].split('"')[3])
-
-
 
 
     
