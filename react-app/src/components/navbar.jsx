@@ -15,8 +15,8 @@ export default function Navbar({ userId, logged }) {
                 <div className="flex flex-row space-x-4 items-center">
                     <MdOutlineDraw size={50} className=""/>
                     {isLoggedIn ? 
-                        (<span className="select-none text-black font-bold text-xl">LetterPractice</span>) : 
-                        (<Link to="/" className="text-black font-bold text-xl">LetterPractice</Link>)
+                        (<span className="select-none text-black font-bold text-xl">WriteWay</span>) : 
+                        (<Link to="/" className="text-black font-bold text-xl">WriteWay</Link>)
                     }
                 </div>
             </div>
@@ -30,7 +30,7 @@ export default function Navbar({ userId, logged }) {
             ) : (
                 <div>
                     <Link to={`/dashboard/${userId}`} className="text-black mr-6">dashboard</Link>
-                    <button className="btn-signup hover:bg-blue-700 transition ease-in-out duration-300">Sign Out</button>
+                    <button className=" btn-signup hover:bg-blue-700 transition ease-in-out duration-300">Sign Out</button>
                 </div>
             )}
             </div>

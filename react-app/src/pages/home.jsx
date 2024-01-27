@@ -3,9 +3,9 @@ import Navbar from "../components/navbar";
 
 export default function Home() {
     return (
-       <div className="bg-gradient-to-r from-indigo-400">
+       <div>
             <Navbar/>
-            <div className="home-section ">
+            <div className="home-section bg-gradient-to-r from-indigo-400 h-screen">
                     <div className="home-content">
                         <h1 className="home-text">Grow <span className='highlight'>Independance</span> Effortlessly with AI-Powered Writing Training</h1>
                         <Link to="/signup" className="text-black font-bold text-xl">

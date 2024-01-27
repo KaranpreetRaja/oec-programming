@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       height: {
-        "draw": "913px"
+        "draw": "950px"
       }
     },
   },
