@@ -6,7 +6,7 @@ user_api = Blueprint('user_api', __name__)
 db = firestore.client()
 users_ref = db.collection('users')
 
-
+from flask_cors import CORS, cross_origin
 
 '''
 POST /api/user/create/DB
@@ -31,6 +31,7 @@ JSON error format:
     
 
 @user_api.route('/create/DB', methods=['POST'])
+@cross_origin()
 def register():
     try:
         uid = request.json["uid"]
@@ -72,6 +73,7 @@ JSON error format:
 '''
 
 @user_api.route('/login_with_google', methods=['POST'])
+@cross_origin()
 def login_with_google():
     try:
         user = request.json
@@ -112,6 +114,7 @@ JSON error format:
 
 '''
 @user_api.route('/login', methods=['POST'])
+@cross_origin()
 def login():
     try:
         user = request.json
@@ -140,6 +143,7 @@ JSON error format:
 }
 '''
 @user_api.route('/<uid>', methods=['GET'])
+@cross_origin()
 def get_user(uid):
     try:
         user = auth.get_user(uid)

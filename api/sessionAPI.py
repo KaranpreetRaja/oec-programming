@@ -3,6 +3,8 @@ from firebase_admin import firestore, auth
 from helper import create_session
 session_api = Blueprint('session_api', __name__)
 
+from flask_cors import CORS, cross_origin
+
 db = firestore.client()
 db_ref = db.collection('levels')
 
@@ -43,6 +45,7 @@ example JSON request:
 }
 '''
 @session_api.route('/create', methods=['POST'])
+@cross_origin()
 def create_session_api():
     try:
         user_id = request.json["user_id"]
@@ -90,6 +93,7 @@ JSON error format:
 }
 '''
 @session_api.route('/submit', methods=['POST'])
+@cross_origin()
 def submit_response():
     try:
         session_id = request.json["session_id"]
@@ -144,20 +148,68 @@ Description: generates 3 of each level for the user to complete.
 JSON request format:
 {
     "user_id": user_id,
-    "session_id": session_id,
 }
 
 JSON response format:
 {
-    prompts: 
+    sessions: 
     [
         {
             "level": level,
-            "prompt": prompt,
-            "overlay": overlay,
+            "session_id": session_id,
+            prompts: [
+                {
+                    "prompt": prompt,
+                    "overlay": overlay,
+                },
+                ...
+            ]
+
         },
         ...
     ]
     ]
 
 '''
+@session_api.route('/placementTest', methods=['GET'])
+@cross_origin()
+def placement_test():
+    try:
+        user_id = request.json["user_id"]
+
+        # generate 5 sessions, one for each level
+        for level in range(1, 6):
+            # generate 3 prompts for each level
+            session_prompts = create_session(level, 3)
+            session_id = db_ref.document().id
+            db_ref.document(session_id).set({
+                "user_id": user_id,
+                "questions": [],
+                "level": level,
+                "amount": 3}
+                )
+            
+            db_ref.document(session_id).update({
+                "questions": firestore.ArrayUnion([{
+                    "prompt": prompt,
+                    "answer": "",
+                    "accuracy": 0
+                } for prompt in session_prompts])
+            })
+
+        # return all sessions
+        sessions = []
+        for level in range(1, 6):
+            sessions.append({
+                "level": level,
+                "session_id": session_id,
+                "prompts": session_prompts
+            })
+
+        
+        return jsonify({'sessions': sessions}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+            

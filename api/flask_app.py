@@ -18,11 +18,13 @@ from sessionAPI import session_api
 
 # create a route to test the API
 @app.route('/test')
+@cross_origin()
 def test():
     return 'API is working!'
 
 # test for json data
 @app.route('/test/json', methods=['POST'])
+@cross_origin()
 def test_json_packet():
     print(request.json)
     return jsonify(request.json)
