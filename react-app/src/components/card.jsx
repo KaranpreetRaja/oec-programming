@@ -16,6 +16,7 @@ const Card = ({ level, icon, user_id }) => {
             });
           
             const session_id = response.data.session_id;
+            const data = response.data
             console.log('Selection successful! UID:', session_id);
             navigate(`/dashboard/${user_id}/assessment/${session_id}`, { state: {data} })
         } catch (error) {
