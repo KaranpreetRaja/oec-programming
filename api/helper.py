@@ -1,5 +1,11 @@
 
 import random
+import base64
+import requests
+import os
+from dotenv import load_dotenv
+load_dotenv(override=True)
+api_key = os.getenv('OPENAI_KEY')
 
 shapes = ["circle", "square", "triangle", "rectangle"]
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F","G", "H", "I", "J", "K", "M", "N", "O", "P", "Q", "R", "S", "T", "V", "W", "X","Y", "Z"]
@@ -39,3 +45,41 @@ def create_session(level, amount):
 
     return selections
 
+
+def vision_module(prompt, image_path):
+    base64_image = image_path
+
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+    }
+
+    payload = {
+    "model": "gpt-4-vision-preview",
+    "messages": [
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": prompt+" Assess the accuracy and quality of the handwriting in the provided image. Rate the handwriting on a scale of 1 to 100, indicating how good it is. Make sure to output as json with the field 'accuracy' representing the rate as a percentage. "
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{base64_image}"
+            }
+            }
+        ]
+        }
+    ],
+    "max_tokens": 300
+    }
+
+    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    print(response.json()['choices'][0]['message']['content'].split('"')[3])
+
+
+
+
+    
