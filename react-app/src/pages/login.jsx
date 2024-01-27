@@ -14,18 +14,18 @@ export default function Login(){
         console.log(email);
         console.log(password);
 
-        // try {
-        //     const response = await axios.post('link here', {
-        //         email,
-        //         password
-        //     });
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/api/user/login', {
+                email,
+                password
+            });
 
-        //     const uid = response.data.uid;
-        //     console.log('Login successful! UID:', uid);
-        //     navigate(`/dashboard/${uid}`);
-        // } catch (error) {
-        //     console.error('Login failed:', error.message);
-        // }
+            const uid = response.data.uid;
+            console.log('Login successful! UID:', uid);
+            navigate(`/dashboard/${uid}`);
+        } catch (error) {
+            console.error('Login failed:', error.message);
+        }
 
         
     
