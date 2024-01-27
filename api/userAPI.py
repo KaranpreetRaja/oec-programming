@@ -9,44 +9,6 @@ users_ref = db.collection('users')
 
 
 '''
-POST /api/create/userDB
-
-Description: Registers a new user in the database.
-
-JSON request format:
-{
-"uid": uid
-}
-
-JSON response format:
-{
-    "uid": "User DB created successfully."
-}
-
-JSON error format:
-{
-    "error": "error message"
-}
-'''
-
-@user_api.route('/create/userDB', methods=['POST'])
-def create_student():
-    try:
-        uid = request.json["uid"]
-        json = {
-            "level1": [],
-            "level2": [],
-            "level3": [],
-            "level4": []
-        }
-        db.collection('user').document(uid).set(json)
-
-        response = {"message": "User DB created successfully."}
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-'''
 POST /api/user/register
 
 Description: Registers a new user in the database.
@@ -56,7 +18,7 @@ JSON request format:
     "email": "user email",
     "password": "user key",
     "email_verified": boolean,
-    "account_disabled": boolean
+    "account_disabled": boolean,
 }
 
 JSON response format:
@@ -82,6 +44,20 @@ def register():
             disabled=user['account_disabled']
         )
 
+        uid = user.uid
+        json = {
+            "email": user['email'],
+            "email_verified": user['email_verified'],
+            "recommended_level": 0,
+            "level1": [],
+            "level2": [],
+            "level3": [],
+            "level4": [],
+
+        }
+        db.collection('user').document(uid).set(json)
+
+
         return jsonify({'uid': user.uid}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -106,15 +82,33 @@ JSON error format:
     "error": "error message"
 }
 '''
+
 @user_api.route('/login_with_google', methods=['POST'])
 def login_with_google():
     try:
         user = request.json
         user = auth.verify_id_token(user['id_token'])
+
+        # if user does not exist, create a new user in database
+        if not auth.get_user(user['uid']):
+            auth.create_user(
+                uid=user['uid'],
+                email=user['email'],
+                email_verified=user['email_verified']
+            )
+
+            uid = request.json["uid"]
+            json = {
+                "recommended_level": 0,
+                "level1": [],
+                "level2": [],
+                "level3": [],
+                "level4": []
+            }
+            db.collection('user').document(uid).set(json)
         return jsonify({'uid': user['uid']}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
 
 
 '''
