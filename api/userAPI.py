@@ -15,10 +15,7 @@ Description: Registers a new user in the database.
 
 JSON request format:
 {
-    "level 1": [],
-    "level 2": [],
-    "level 3": [],
-    "level 4": []
+"uid": uid
 }
 
 JSON response format:
