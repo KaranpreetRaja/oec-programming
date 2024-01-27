@@ -9,21 +9,18 @@ users_ref = db.collection('users')
 
 
 '''
-POST /api/user/register
+POST /api/user/create/DB
 
 Description: Registers a new user in the database.
 
 JSON request format:
 {
-    "email": "user email",
-    "password": "user key",
-    "email_verified": boolean,
-    "account_disabled": boolean,
+"uid": uid
 }
 
 JSON response format:
 {
-    "uid": "user id"
+    "json": json
 }
 
 JSON error format:
@@ -33,21 +30,11 @@ JSON error format:
 '''
     
 
-@user_api.route('/register', methods=['POST'])
+@user_api.route('/create/DB', methods=['POST'])
 def register():
     try:
-        user = request.json
-        user = auth.create_user(
-            email=user['email'],
-            password=user['password'],
-            email_verified=user['email_verified'],
-            disabled=user['account_disabled']
-        )
-
-        uid = user.uid
+        uid = request.json["uid"]
         json = {
-            "email": user['email'],
-            "email_verified": user['email_verified'],
             "recommended_level": 0,
             "level1": [],
             "level2": [],
@@ -55,10 +42,10 @@ def register():
             "level4": [],
 
         }
-        db.collection('user').document(uid).set(json)
+        db.collection('users').document(uid).set(json)
 
 
-        return jsonify({'uid': user.uid}), 200
+        return jsonify({'JSON': json}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
@@ -96,16 +83,6 @@ def login_with_google():
                 email=user['email'],
                 email_verified=user['email_verified']
             )
-
-            uid = request.json["uid"]
-            json = {
-                "recommended_level": 0,
-                "level1": [],
-                "level2": [],
-                "level3": [],
-                "level4": []
-            }
-            db.collection('user').document(uid).set(json)
         return jsonify({'uid': user['uid']}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -170,7 +147,6 @@ def get_user(uid):
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
 
 
 
