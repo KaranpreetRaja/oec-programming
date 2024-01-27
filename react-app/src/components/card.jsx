@@ -9,7 +9,7 @@ const Card = ({ level, icon, user_id }) => {
         const amount = 10;
 
         try {
-            const response = await axios.post('link here', {
+            const response = await axios.post('http://127.0.0.1:5000/api/session/create', {
                 user_id,
                 level,
                 amount

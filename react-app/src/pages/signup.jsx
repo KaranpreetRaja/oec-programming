@@ -14,20 +14,20 @@ export default function Signup(){
         console.log(email);
         console.log(password);
         
-        // try {
-        //     const response = await axios.post('link here', {
-        //         email: email,
-        //         password: password,
-        //         email_verified: true,
-        //         account_disabled: false
-        //     });
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/api/user/signup', {
+                email: email,
+                password: password,
+                email_verified: true,
+                account_disabled: false
+            });
 
-        //     const uid = response.data.uid;
-        //     console.log('Register successful! UID:', uid);
-        //     navigate(`/dashboard/${uid}`);
-        // } catch (error) {
-        //     console.error('Register failed:', error.message);
-        // }
+            const uid = response.data.uid;
+            console.log('Register successful! UID:', uid);
+            navigate(`/dashboard/${uid}`);
+        } catch (error) {
+            console.error('Register failed:', error.message);
+        }
     }
 
     return(
