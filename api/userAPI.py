@@ -32,7 +32,7 @@ JSON error format:
 
 @user_api.route('/create/DB', methods=['POST'])
 @cross_origin()
-def register():
+def create_db():
     try:
         uid = request.json["uid"]
         json = {
@@ -62,6 +62,42 @@ example of user document in database:
 }
 '''
 
+
+'''
+POST /api/user/register
+    "email": "user email",
+    "password": "user key",
+    "email_verified": boolean,
+    "account_disabled": boolean
+    "account_disabled": boolean,
+}
+JSON response format:
+{
+    "uid": "user id"
+}
+JSON error format:
+{
+    "error": "error message"
+}
+'''
+    
+@user_api.route('/register', methods=['POST'])
+@cross_origin()
+def register():
+    try:
+        user = request.json
+        user = auth.create_user(
+            email=user['email'],
+            password=user['password'],
+            email_verified=user['email_verified'],
+            disabled=user['account_disabled']
+        )
+
+
+        return jsonify({'uid': user.uid}), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': str(e)}), 400
 
 '''
 POST /api/user/login_with_google
@@ -130,11 +166,12 @@ JSON error format:
 def login():
     try:
         user = request.json
-        user = auth.get_user_by_email(user['email'])
+        # user = auth.get_user_by_email(user['email'])
         # verify password
-        auth.get_user_by_email(user['email'], user['password'])
+        user = auth.get_user_by_email(user['email'])
         return jsonify({'uid': user.uid}), 200
     except Exception as e:
+        print(f"Error: {e}")
         return jsonify({'error': str(e)}), 400
     
 '''
